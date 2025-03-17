@@ -125,7 +125,7 @@ function logToBigQuery(dataToLog) {
   // timestamp is required.
   dataToLog.timestamp = getTimestampMillis();
 
-  // Columns with type JSON need in BQ double quotes to be escaped.
+  // Columns with type JSON need to be stringified.
   ['custom_data', 'event_data', 'request_body'].forEach(
     (p) => (dataToLog[p] = JSON.stringify(dataToLog[p]))
   );
