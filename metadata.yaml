@@ -1,6 +1,6 @@
 homepage: "https://stape.io/"
 versions:
-  - sha: 778a5fbc11e21973c5ff1c9ddac2aa0ae8320db4
+  - sha: 1f23229feba926e81d74ecc080c9f56f8259a7cf
     changeNotes: Add BigQuery table insertion support. Add tests.
   - sha: 3bd0ab18350cf8737a7410ec6f0c3bbc85fe844f
     changeNotes: Initial release.
