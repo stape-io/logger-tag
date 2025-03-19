@@ -1,11 +1,19 @@
 # Logger tag for Google Tag Manager Server Side
 
-Use this tag to log specific requests from server GTM to stape.io logs. Also helps to record POST requests body. Logger tags allow to:
+The **Logger** tag for Server-Side Google Tag Manager (sGTM) helps track and debug requests sent to your server container. It allows you to log event data, request details, and custom information to stape.io, GCP, BigQuery, or other cloud platform logs.
+This tag also allows logging of POST request bodies, which are not included in logs for GCP or Stape by default.
 
-- log all Event Data
-- log Request Url
-- log Request Body
-- parse Request Body as JSON
+## Features
+
+With the Logger tag, you can:
+- Log all **Event Data**
+- Log the **Request URL**
+- Log the **Request Body**
+- Parse **Request Body** as JSON
+- Add **Custom Information**
+- Choose a logging destination:
+  - **Console**
+  - **BigQuery**
 
 ## How to use Logger tag
 
