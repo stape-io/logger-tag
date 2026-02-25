@@ -1,7 +1,7 @@
 homepage: 'https://stape.io/'
 documentation: 'https://github.com/stape-io/logger-tag'
 versions:
-  - sha: 7401edf86b7ac7f35727bf313559027284e5a9c0
+  - sha: 95810be6c067ca53ac621c61991fb8cf20ad9776
     changeNotes: Add support for logging to Stape Store.
   - sha: 28b8105a92946a4d182383fecb679281b6c10260
     changeNotes: Remove some code comments.
