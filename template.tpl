@@ -200,6 +200,40 @@ ___TEMPLATE_PARAMETERS___
   },
   {
     "type": "CHECKBOX",
+    "name": "overrideDocumentTitle",
+    "checkboxText": "Override document title",
+    "simpleValueType": true,
+    "help": "Enabling this allows you to define a custom identifier that will be inserted into the document name at Stape Store. This feature may help searching documents within Stape Store Logger Tag logs.\u003c/br\u003e\u003c/br\u003e\nE.g. The document name will follow this structure:\n\u003c/br\u003e\u003c/br\u003e\n\u003cb\u003elogger_{custom_unique_identifier}_{random_number}\u003c/b\u003e",
+    "enablingConditions": [
+      {
+        "paramName": "logDestination",
+        "paramValue": "stapeStore",
+        "type": "EQUALS"
+      }
+    ],
+    "subParams": [
+      {
+        "type": "TEXT",
+        "name": "customDocumentIdentifier",
+        "displayName": "Custom document identifier",
+        "simpleValueType": true,
+        "enablingConditions": [
+          {
+            "paramName": "overrideDocumentTitle",
+            "paramValue": true,
+            "type": "EQUALS"
+          }
+        ],
+        "valueValidators": [
+          {
+            "type": "NON_EMPTY"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "CHECKBOX",
     "name": "eventData",
     "checkboxText": "Log all Event Data",
     "simpleValueType": true,
@@ -397,7 +431,11 @@ function logToBigQuery(data, dataToLog) {
 
 function generateDocumentId() {
   const rnd = makeString(generateRandom(1000000000, 2147483647));
-  return 'logger_' + makeString(getTimestampMillis()) + rnd;
+  const customDocumentIdentifier =
+    data.overrideDocumentTitle && data.customDocumentIdentifier
+      ? '_' + data.customDocumentIdentifier + '_'
+      : '_';
+  return 'logger' + customDocumentIdentifier + makeString(getTimestampMillis()) + rnd;
 }
 
 function getStapeStoreBaseUrl(data) {
