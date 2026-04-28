@@ -128,7 +128,11 @@ function logToBigQuery(data, dataToLog) {
 
 function generateDocumentId() {
   const rnd = makeString(generateRandom(1000000000, 2147483647));
-  return 'logger_' + makeString(getTimestampMillis()) + rnd;
+  const customDocumentIdentifier =
+    data.insertCustomDocumentIdentifier && data.customDocumentIdentifier
+      ? data.customDocumentIdentifier + '_'
+      : '';
+  return 'logger_' + customDocumentIdentifier + makeString(getTimestampMillis()) + rnd;
 }
 
 function getStapeStoreBaseUrl(data) {
