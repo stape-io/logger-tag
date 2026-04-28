@@ -1,7 +1,7 @@
 homepage: 'https://stape.io/'
 documentation: 'https://github.com/stape-io/logger-tag'
 versions:
-  - sha: af44a5870667dc849ef3ca78bbc94f311fb9c8c7
+  - sha: dbc5622c6624169881c00f2790cb50aaede6a6ab
     changeNotes: Add support to custom document identifier in Stape Store.
   - sha: 95810be6c067ca53ac621c61991fb8cf20ad9776
     changeNotes: Add support for logging to Stape Store.
