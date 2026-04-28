@@ -858,4 +858,5 @@ ___NOTES___
 
 Created on 18/04/2022, 09:51:02
 
-
+2026/04/28 - Change Notes:
+ - Add support to custom document identifier in Stape Store.
