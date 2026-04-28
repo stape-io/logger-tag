@@ -14,6 +14,9 @@ ___INFO___
   "version": 1,
   "securityGroups": [],
   "displayName": "Logger",
+  "categories": [
+    "UTILITY"
+  ],
   "brand": {
     "id": "brand_dummy",
     "displayName": "stape.io",
@@ -103,14 +106,54 @@ ___TEMPLATE_PARAMETERS___
         "name": "stapeStoreCollectionName",
         "displayName": "Stape Store Collection Name",
         "simpleValueType": true,
-        "help": "The name of the collection on the Stape Store that contains (or will contain) the document with the data.\n\u003cbr/\u003e\u003cbr/\u003e\nIf not set, the \u003ci\u003elogger\u003c/i\u003e Collection Name will be used.",
+        "help": "The name of the collection on the Stape Store that contains (or will contain) the document with the data.\n\u003cbr/\u003e\u003cbr/\u003e\nIf not set, the \u003ci\u003elogger\u003c/i\u003e Collection Name will be used.\n\u003cbr/\u003e\u003cbr/\u003e\nIt must match the regex: ^[a-zA-Z0-9_$%@+\u003d./-]{1,255}$",
         "defaultValue": "logger",
         "valueValidators": [
           {
             "type": "NON_EMPTY"
+          },
+          {
+            "type": "REGEX",
+            "args": [
+              "^[a-zA-Z0-9_$%@+\u003d./-]{1,255}$"
+            ]
           }
         ],
         "valueHint": "logger"
+      },
+      {
+        "type": "CHECKBOX",
+        "name": "insertCustomDocumentIdentifier",
+        "checkboxText": "Insert Custom Document Identifier",
+        "simpleValueType": true,
+        "help": "By default, the document name at Stape Store is:\n\u003cbr/\u003e\n\u003ci\u003elogger_{random_number}\u003c/i\u003e\n\u003cbr/\u003e\u003cbr/\u003e\nEnabling this allows you to define a custom identifier that will be inserted into the document name at Stape Store. This feature may help searching documents within Stape Store Logger Tag logs.\n\u003c/br\u003e\nE.g. The document name will follow this structure:\n\u003c/br\u003e\n\u003ci\u003elogger_\u003cb\u003e{custom_identifier}\u003c/b\u003e_{random_number}\u003c/i\u003e",
+        "subParams": [
+          {
+            "type": "TEXT",
+            "name": "customDocumentIdentifier",
+            "displayName": "Custom Document Identifier",
+            "simpleValueType": true,
+            "enablingConditions": [
+              {
+                "paramName": "insertCustomDocumentIdentifier",
+                "paramValue": true,
+                "type": "EQUALS"
+              }
+            ],
+            "valueValidators": [
+              {
+                "type": "NON_EMPTY"
+              },
+              {
+                "type": "REGEX",
+                "args": [
+                  "^[a-zA-Z0-9_$%@+\u003d./-]{1,224}$"
+                ]
+              }
+            ],
+            "help": "It must match the regex: ^[a-zA-Z0-9_$%@+\u003d./-]{1,224}$"
+          }
+        ]
       },
       {
         "type": "SELECT",
@@ -197,40 +240,6 @@ ___TEMPLATE_PARAMETERS___
     "simpleValueType": true,
     "help": "An identifier to help finding your event in the logs.\n\u003cbr/\u003e\nIf not set, \"Logger\" will be used as the default value.",
     "defaultValue": "Logger"
-  },
-  {
-    "type": "CHECKBOX",
-    "name": "overrideDocumentTitle",
-    "checkboxText": "Override document title",
-    "simpleValueType": true,
-    "help": "Enabling this allows you to define a custom identifier that will be inserted into the document name at Stape Store. This feature may help searching documents within Stape Store Logger Tag logs.\u003c/br\u003e\u003c/br\u003e\nE.g. The document name will follow this structure:\n\u003c/br\u003e\u003c/br\u003e\n\u003cb\u003elogger_{custom_unique_identifier}_{random_number}\u003c/b\u003e",
-    "enablingConditions": [
-      {
-        "paramName": "logDestination",
-        "paramValue": "stapeStore",
-        "type": "EQUALS"
-      }
-    ],
-    "subParams": [
-      {
-        "type": "TEXT",
-        "name": "customDocumentIdentifier",
-        "displayName": "Custom document identifier",
-        "simpleValueType": true,
-        "enablingConditions": [
-          {
-            "paramName": "overrideDocumentTitle",
-            "paramValue": true,
-            "type": "EQUALS"
-          }
-        ],
-        "valueValidators": [
-          {
-            "type": "NON_EMPTY"
-          }
-        ]
-      }
-    ]
   },
   {
     "type": "CHECKBOX",
@@ -432,10 +441,10 @@ function logToBigQuery(data, dataToLog) {
 function generateDocumentId() {
   const rnd = makeString(generateRandom(1000000000, 2147483647));
   const customDocumentIdentifier =
-    data.overrideDocumentTitle && data.customDocumentIdentifier
-      ? '_' + data.customDocumentIdentifier + '_'
-      : '_';
-  return 'logger' + customDocumentIdentifier + makeString(getTimestampMillis()) + rnd;
+    data.insertCustomDocumentIdentifier && data.customDocumentIdentifier
+      ? data.customDocumentIdentifier + '_'
+      : '';
+  return 'logger_' + customDocumentIdentifier + makeString(getTimestampMillis()) + rnd;
 }
 
 function getStapeStoreBaseUrl(data) {
@@ -860,3 +869,4 @@ Created on 18/04/2022, 09:51:02
 
 2026/04/28 - Change Notes:
  - Add support to custom document identifier in Stape Store.
+
