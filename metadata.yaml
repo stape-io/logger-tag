@@ -1,6 +1,8 @@
 homepage: 'https://stape.io/'
 documentation: 'https://github.com/stape-io/logger-tag'
 versions:
+  - sha: dfb4695b61916e562e63a3de6badaccb67061a8d
+    changeNotes: Fix crash when parsing non JSON request body.
   - sha: dbc5622c6624169881c00f2790cb50aaede6a6ab
     changeNotes: Add support to custom document identifier in Stape Store.
   - sha: 95810be6c067ca53ac621c61991fb8cf20ad9776
