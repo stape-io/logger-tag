@@ -63,7 +63,7 @@ if (data.requestUrl) {
 
 if (data.requestBody) {
   const body = getRequestBody();
-  rawData.RequestBody = data.requestBodyJson && body ? JSON.parse(body) : body;
+  rawData.RequestBody = data.requestBodyJson && body ? safeJsonParse(body) : body;
 }
 
 const mapping = keyMappings[logDestination];
@@ -202,6 +202,15 @@ function logToStapeStore(data, dataToLog) {
 
 function isUIFieldTrue(field) {
   return [true, 'true', 1, '1'].indexOf(field) !== -1;
+}
+
+function safeJsonParse(body) {
+  const firstChar = body.charAt(0);
+  const lastChar = body.charAt(body.length - 1);
+  const looksLikeJson =
+    (firstChar === '{' && lastChar === '}') || (firstChar === '[' && lastChar === ']');
+  if (!looksLikeJson) return body;
+  return JSON.parse(body);
 }
 
 function enc(data) {

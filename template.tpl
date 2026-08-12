@@ -375,7 +375,7 @@ if (data.requestUrl) {
 
 if (data.requestBody) {
   const body = getRequestBody();
-  rawData.RequestBody = data.requestBodyJson && body ? JSON.parse(body) : body;
+  rawData.RequestBody = data.requestBodyJson && body ? safeJsonParse(body) : body;
 }
 
 const mapping = keyMappings[logDestination];
@@ -514,6 +514,15 @@ function logToStapeStore(data, dataToLog) {
 
 function isUIFieldTrue(field) {
   return [true, 'true', 1, '1'].indexOf(field) !== -1;
+}
+
+function safeJsonParse(body) {
+  const firstChar = body.charAt(0);
+  const lastChar = body.charAt(body.length - 1);
+  const looksLikeJson =
+    (firstChar === '{' && lastChar === '}') || (firstChar === '[' && lastChar === ']');
+  if (!looksLikeJson) return body;
+  return JSON.parse(body);
 }
 
 function enc(data) {
@@ -793,6 +802,34 @@ scenarios:
     );
     assertApi('gtmOnSuccess').wasCalled();
     assertApi('gtmOnFailure').wasNotCalled();
+- name: '[logToConsole] Falls back to raw string when requestBodyJson is enabled but
+    body is not valid JSON (eg GA4 form-encoded payload)'
+  code: |-
+    const expectedNonJsonBody = 'en=purchase&dl=https%3A%2F%2Fexample.com';
+
+    mockData.logType = 'always';
+    mockData.logDestination = 'console';
+    mockData.requestBody = true;
+    mockData.requestBodyJson = true;
+    mockData.eventName = expectedValue;
+
+    mock('getRequestBody', () => {
+      return expectedNonJsonBody;
+    });
+
+    runCode(mockData);
+
+    assertApi('logToConsole').wasCalledWith(
+      JSON.stringify({
+        Name: 'Logger',
+        Type: 'Message',
+        TraceId: expectedValue,
+        EventName: expectedValue,
+        RequestBody: expectedNonJsonBody
+      })
+    );
+    assertApi('gtmOnSuccess').wasCalled();
+    assertApi('gtmOnFailure').wasNotCalled();
 - name: '[BigQuery_insert] Logs everything correctly'
   code: "const expectedConnectionInfo = {\n  projectId: mockData.logBigQueryProjectId,\n\
     \  datasetId: mockData.logBigQueryDatasetId,\n  tableId: mockData.logBigQueryTableId\n\
@@ -865,8 +902,10 @@ setup: "const JSON = require('JSON');\nconst Promise = require('Promise');\ncons
 
 ___NOTES___
 
-Created on 18/04/2022, 09:51:02
+2026-08-12 - Change Notes:
+  - Fix crash when logging a non-JSON POST body (e.g. GA4's 'en=purchase&...' form-encoded payload) with "Parse Request Body as JSON" enabled; now falls back to the raw string instead of throwing
 
-2026/04/28 - Change Notes:
+2026-04-28 - Change Notes:
  - Add support to custom document identifier in Stape Store.
 
+Created on 18/04/2022, 09:51:02
